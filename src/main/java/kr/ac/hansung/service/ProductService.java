@@ -23,10 +23,20 @@ public class ProductService {
         return productRepository.findById(id).orElseThrow();
     }
 
+
+    @Transactional
+    public void saveProduct(ProductDto dto) {
+        Product product = new Product();
+        product.setName(dto.getName());
+        product.setPrice(dto.getPrice());
+        product.setStock(dto.getStock());
+
+        productRepository.save(product);
+    }
+
     @Transactional
     public void updateProduct(Long id, ProductDto dto) {
         Product product = productRepository.findById(id).orElseThrow();
-        // 더티 체킹(Dirty Checking)으로 자동 UPDATE
         product.setName(dto.getName());
         product.setPrice(dto.getPrice());
         product.setStock(dto.getStock());

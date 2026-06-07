@@ -1,17 +1,17 @@
 package kr.ac.hansung.controller;
 
-
 import jakarta.validation.Valid;
 import kr.ac.hansung.dto.ProductDto;
+import kr.ac.hansung.entity.Product;
 import kr.ac.hansung.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/products")
@@ -21,10 +21,27 @@ public class ProductController {
 
     @GetMapping
     public String list(@RequestParam(required = false) String keyword,
-                       @PageableDefault(size = 5, sort = "id") Pageable pageable, Model model) {
-        model.addAttribute("productPage", productService.searchProducts(keyword, pageable));
+                       @PageableDefault(size = 10, sort = "id") Pageable pageable, Model model) {
+        Page<Product> productPage = productService.searchProducts(keyword, pageable);
+        model.addAttribute("products", productPage); // Page 객체 전체 전달
         model.addAttribute("keyword", keyword);
         return "products/list";
+    }
+
+    @GetMapping("/add")
+    public String addForm(Model model) {
+        model.addAttribute("productDto", new ProductDto());
+        return "products/add";
+    }
+
+    @PostMapping("/add")
+    public String add(@Valid @ModelAttribute("productDto") ProductDto dto,
+                      BindingResult br) {
+        if (br.hasErrors()) {
+            return "products/add";
+        }
+        productService.saveProduct(dto);
+        return "redirect:/products";
     }
 
     @GetMapping("/{id}/edit")
@@ -38,9 +55,9 @@ public class ProductController {
     public String edit(@PathVariable Long id,
                        @Valid @ModelAttribute("productDto") ProductDto dto,
                        BindingResult br,
-                       Model model) { // 모델을 추가하여 에러 시 productId 유지
+                       Model model) {
         if (br.hasErrors()) {
-            model.addAttribute("productId", id); // 에러 발생 시 id값 다시 전달
+            model.addAttribute("productId", id);
             return "products/edit";
         }
         productService.updateProduct(id, dto);
