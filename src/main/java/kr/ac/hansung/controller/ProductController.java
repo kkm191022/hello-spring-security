@@ -1,5 +1,6 @@
 package kr.ac.hansung.controller;
 
+
 import jakarta.validation.Valid;
 import kr.ac.hansung.dto.ProductDto;
 import kr.ac.hansung.service.ProductService;
@@ -34,11 +35,15 @@ public class ProductController {
     }
 
     @PostMapping("/{id}/edit")
-    public String edit(@PathVariable Long id, @Valid @ModelAttribute ProductDto dto,
-                       BindingResult br, RedirectAttributes ra) {
-        if (br.hasErrors()) return "products/edit";
+    public String edit(@PathVariable Long id,
+                       @Valid @ModelAttribute("productDto") ProductDto dto,
+                       BindingResult br,
+                       Model model) { // 모델을 추가하여 에러 시 productId 유지
+        if (br.hasErrors()) {
+            model.addAttribute("productId", id); // 에러 발생 시 id값 다시 전달
+            return "products/edit";
+        }
         productService.updateProduct(id, dto);
-        ra.addFlashAttribute("msg", "수정 완료");
         return "redirect:/products";
     }
 }
