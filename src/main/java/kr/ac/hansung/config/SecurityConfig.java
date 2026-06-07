@@ -29,10 +29,10 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authz -> authz
+                        // 접근 허용 경로 명시
                         .requestMatchers("/", "/login", "/signup",
                                 "/css/**", "/js/**", "/images/**", "/favicon.ico").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
-                        // 수정된 부분: 상품 수정(edit) 권한 추가
                         .requestMatchers("/products/add", "/products/*/delete", "/products/*/edit").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/products").hasRole("ADMIN")
                         .anyRequest().authenticated()
@@ -41,7 +41,7 @@ public class SecurityConfig {
                         .loginPage("/login")
                         .defaultSuccessUrl("/home", true)
                         .failureUrl("/login?error")
-                        .permitAll()
+                        .permitAll() // 💡 중요: 로그인 페이지 자체는 모든 사용자가 접근 가능해야 무한 루프 방지
                 )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
