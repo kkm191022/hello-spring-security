@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -22,11 +23,9 @@ public class ProductController {
     @GetMapping
     public String list(@RequestParam(required = false, defaultValue = "") String keyword,
                        @PageableDefault(size = 10, sort = "id") Pageable pageable, Model model) {
-
         Page<Product> productPage = productService.searchProducts(keyword, pageable);
-
         model.addAttribute("products", productPage);
-        model.addAttribute("keyword", keyword); // 뷰에서 검색창에 표시하기 위해 추가
+        model.addAttribute("keyword", keyword);
         return "products/list";
     }
 
@@ -43,6 +42,7 @@ public class ProductController {
         return "redirect:/products";
     }
 
+    // 수정 권한이 없는 사용자가 직접 접근 시 처리
     @GetMapping("/{id}/edit")
     public String editForm(@PathVariable Long id, Model model) {
         model.addAttribute("productDto", productService.findById(id));
