@@ -19,21 +19,24 @@ import org.springframework.web.bind.annotation.*;
 public class ProductController {
     private final ProductService productService;
 
+    // 1. 상품 목록 조회
     @GetMapping
     public String list(@RequestParam(required = false) String keyword,
                        @PageableDefault(size = 10, sort = "id") Pageable pageable, Model model) {
         Page<Product> productPage = productService.searchProducts(keyword, pageable);
-        model.addAttribute("products", productPage); // Page 객체 전체 전달
+        model.addAttribute("products", productPage);
         model.addAttribute("keyword", keyword);
         return "products/list";
     }
 
+    // 2. 상품 등록 폼
     @GetMapping("/add")
     public String addForm(Model model) {
         model.addAttribute("productDto", new ProductDto());
         return "products/add";
     }
 
+    // 3. 상품 등록 처리
     @PostMapping("/add")
     public String add(@Valid @ModelAttribute("productDto") ProductDto dto,
                       BindingResult br) {
@@ -44,6 +47,7 @@ public class ProductController {
         return "redirect:/products";
     }
 
+    // 4. 상품 수정 폼
     @GetMapping("/{id}/edit")
     public String editForm(@PathVariable Long id, Model model) {
         model.addAttribute("productDto", productService.findById(id));
@@ -51,6 +55,7 @@ public class ProductController {
         return "products/edit";
     }
 
+    // 5. 상품 수정 처리
     @PostMapping("/{id}/edit")
     public String edit(@PathVariable Long id,
                        @Valid @ModelAttribute("productDto") ProductDto dto,
@@ -61,6 +66,13 @@ public class ProductController {
             return "products/edit";
         }
         productService.updateProduct(id, dto);
+        return "redirect:/products";
+    }
+
+    // 6. 상품 삭제 처리
+    @PostMapping("/{id}/delete")
+    public String delete(@PathVariable Long id) {
+        productService.deleteProduct(id);
         return "redirect:/products";
     }
 }

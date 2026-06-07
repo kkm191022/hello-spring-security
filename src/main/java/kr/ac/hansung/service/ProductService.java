@@ -23,14 +23,13 @@ public class ProductService {
         return productRepository.findById(id).orElseThrow();
     }
 
-
     @Transactional
     public void saveProduct(ProductDto dto) {
         Product product = new Product();
         product.setName(dto.getName());
         product.setPrice(dto.getPrice());
         product.setStock(dto.getStock());
-
+        product.setDescription(dto.getDescription());
         productRepository.save(product);
     }
 
@@ -40,5 +39,12 @@ public class ProductService {
         product.setName(dto.getName());
         product.setPrice(dto.getPrice());
         product.setStock(dto.getStock());
+        product.setDescription(dto.getDescription());
+    }
+
+    // [추가됨] 삭제 메서드
+    @Transactional
+    public void deleteProduct(Long id) {
+        productRepository.deleteById(id);
     }
 }
