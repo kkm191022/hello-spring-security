@@ -11,9 +11,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
-    @Query("SELECT p FROM Product p WHERE (:keyword IS NULL OR p.name LIKE %:keyword%)")
+    @Query("SELECT p FROM Product p WHERE (:keyword IS NULL OR :keyword = '' OR p.name LIKE %:keyword%)")
     Page<Product> findByNameContaining(@Param("keyword") String keyword, Pageable pageable);
-
 
     long countByStock(int stock);
 }

@@ -44,6 +44,20 @@
         <a th:href="@{/products/add}" class="btn btn-danger btn-sm" sec:authorize="hasRole('ADMIN')">+ 상품 등록</a>
     </div>
 
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <form th:action="@{/products}" method="get" class="row g-2">
+                <div class="col">
+                    <input type="text" name="keyword" th:value="${keyword}" class="form-control" placeholder="상품명으로 검색하세요...">
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-primary">검색</button>
+                    <a th:href="@{/products}" class="btn btn-outline-secondary">초기화</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <div class="card border-0 shadow-sm">
         <div class="card-body p-0">
             <div th:if="${products.content.isEmpty()}" class="text-center py-5 text-muted">
@@ -58,7 +72,7 @@
                         <th>설명</th>
                         <th class="text-end">가격</th>
                         <th class="text-center">재고</th>
-                        <th class="text-center">관리</th>
+                        <th class="text-center" sec:authorize="hasRole('ADMIN')">관리</th>
                     </tr>
                     </thead>
                     <tbody>

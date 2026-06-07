@@ -19,16 +19,16 @@ import org.springframework.web.bind.annotation.*;
 public class ProductController {
     private final ProductService productService;
 
-
     @GetMapping
-    public String list(@RequestParam(required = false) String keyword,
+    public String list(@RequestParam(required = false, defaultValue = "") String keyword,
                        @PageableDefault(size = 10, sort = "id") Pageable pageable, Model model) {
+
         Page<Product> productPage = productService.searchProducts(keyword, pageable);
+
         model.addAttribute("products", productPage);
-        model.addAttribute("keyword", keyword);
+        model.addAttribute("keyword", keyword); // 뷰에서 검색창에 표시하기 위해 추가
         return "products/list";
     }
-
 
     @GetMapping("/add")
     public String addForm(Model model) {
@@ -36,17 +36,12 @@ public class ProductController {
         return "products/add";
     }
 
-
     @PostMapping("/add")
-    public String add(@Valid @ModelAttribute("productDto") ProductDto dto,
-                      BindingResult br) {
-        if (br.hasErrors()) {
-            return "products/add";
-        }
+    public String add(@Valid @ModelAttribute("productDto") ProductDto dto, BindingResult br) {
+        if (br.hasErrors()) return "products/add";
         productService.saveProduct(dto);
         return "redirect:/products";
     }
-
 
     @GetMapping("/{id}/edit")
     public String editForm(@PathVariable Long id, Model model) {
@@ -55,12 +50,8 @@ public class ProductController {
         return "products/edit";
     }
 
-
     @PostMapping("/{id}/edit")
-    public String edit(@PathVariable Long id,
-                       @Valid @ModelAttribute("productDto") ProductDto dto,
-                       BindingResult br,
-                       Model model) {
+    public String edit(@PathVariable Long id, @Valid @ModelAttribute("productDto") ProductDto dto, BindingResult br, Model model) {
         if (br.hasErrors()) {
             model.addAttribute("productId", id);
             return "products/edit";
@@ -68,7 +59,6 @@ public class ProductController {
         productService.updateProduct(id, dto);
         return "redirect:/products";
     }
-
 
     @PostMapping("/{id}/delete")
     public String delete(@PathVariable Long id) {

@@ -42,7 +42,6 @@ public class ProductService {
         product.setDescription(dto.getDescription());
     }
 
-
     @Transactional
     public void deleteProduct(Long id) {
         productRepository.deleteById(id);
