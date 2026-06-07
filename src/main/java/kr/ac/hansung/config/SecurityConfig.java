@@ -29,7 +29,6 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authz -> authz
-                        // 접근 허용 경로 명시
                         .requestMatchers("/", "/login", "/signup",
                                 "/css/**", "/js/**", "/images/**", "/favicon.ico").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
@@ -41,7 +40,7 @@ public class SecurityConfig {
                         .loginPage("/login")
                         .defaultSuccessUrl("/home", true)
                         .failureUrl("/login?error")
-                        .permitAll() // 💡 중요: 로그인 페이지 자체는 모든 사용자가 접근 가능해야 무한 루프 방지
+                        .permitAll()
                 )
                 .logout(logout -> logout
                         .logoutUrl("/logout")

@@ -42,7 +42,7 @@ public class ProductService {
         product.setDescription(dto.getDescription());
     }
 
-    // [추가됨] 삭제 메서드
+
     @Transactional
     public void deleteProduct(Long id) {
         productRepository.deleteById(id);
